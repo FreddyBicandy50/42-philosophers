@@ -5,40 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/17 15:12:53 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/02 17:43:45 by fbicandy         ###   ########.fr       */
+/*   Created: 2025/06/03 15:18:08 by fbicandy          #+#    #+#             */
+/*   Updated: 2025/06/03 15:28:55 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-bool	valid(char *str)
-{
-	while (*str)
-	{
-		if (!(*str >= '0' && *str <= '9'))
-			return (false);
-		str++;
-	}
-	return (true);
-}
-
-int	ft_atoi(char *str)
-{
-	int	result;
-	int	i;
-
-	if (!valid(str))
-		return (-1);
-	result = 0;
-	i = 0;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		result = result * 10 + (str[i] - '0');
-		i++;
-	}
-	return (result);
-}
 
 pthread_mutex_t	*init_mutexes(t_table **table)
 {
@@ -52,7 +24,7 @@ pthread_mutex_t	*init_mutexes(t_table **table)
 	while (i < (int)(*table)->nb_philos)
 	{
 		if (pthread_mutex_init(&forks[i], 0) != 0)
-			return (ft_error("error mutex initialise", (void **)&forks), NULL);
+			return (printf("error mutex initialise"), free(forks), NULL);
 		i++;
 	}
 	if (pthread_mutex_init(&(*table)->write_lock, 0) != 0
@@ -76,7 +48,7 @@ t_philo	**init_philo(t_table *table)
 		philos[i] = malloc(sizeof(t_philo) * 1);
 		if (pthread_mutex_init(&philos[i]->meal_time_lock, 0)
 			|| !philos[i] != 0)
-			return (ft_error("malloc error!", (void **)&philos), NULL);
+			return (printf("malloc error!"), free(table), NULL);
 		philos[i]->table = table;
 		philos[i]->id = i;
 		philos[i]->time_ate = 0;
@@ -101,12 +73,12 @@ t_table	*init_table(int argc, char **argv)
 		return (printf("malloc error!"), NULL);
 	i = 1;
 	if (ft_atoi(argv[i]) == 0)
-		return (ft_error("error ./philo: number of philosophers cannot be zero",
-				(void **)&table), NULL);
+		return (printf("error ./philo: number of philosophers cannot be zero"),
+			free(table), NULL);
 	while (i < argc)
-		if (ft_atoi(argv[i++]) <= -1)
-			return (ft_error("error ./philo: negative values not allowed\n",
-					(void **)&table), NULL);
+		if (ft_atoi(argv[i]) <= -1 || ft_atoi(argv[i++]) > MAX_PHILOS)
+			return (printf("error:number of philos should be between 1->250\n"),
+				free(table), NULL);
 	i = 1;
 	table->nb_philos = ft_atoi(argv[i++]);
 	table->time_to_die = ft_atoi(argv[i++]);

@@ -1,10 +1,10 @@
 NAME = philo
-INCLUDES = ./src/
+INCLUDES = ./includes/
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g  -I$(INCLUDES)
 SRCS = main.c \
-        src/init_table.c \
+        src/init_table.c src/parsing.c src/logistics.c\
 
 OBJECTS = $(SRCS:.c=.o)
 

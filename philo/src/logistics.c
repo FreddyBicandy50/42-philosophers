@@ -1,41 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   logistics.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/12 19:42:18 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/03 15:26:43 by fbicandy         ###   ########.fr       */
+/*   Created: 2025/06/03 20:00:03 by fbicandy          #+#    #+#             */
+/*   Updated: 2025/06/03 20:08:18 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-bool	ft_isdigit(char *str)
+void	cleanup(t_table *table)
 {
-	while (*str)
-	{
-		if (!(*str >= '0' && *str <= '9'))
-			return (false);
-		str++;
-	}
-	return (true);
-}
-
-int	ft_atoi(char *str)
-{
-	int	result;
 	int	i;
 
-	if (!ft_isdigit(str))
-		return (-1);
-	result = 0;
 	i = 0;
-	while (str[i] >= '0' && str[i] <= '9')
+	while (i < (int)table->nb_philos)
 	{
-		result = result * 10 + (str[i] - '0');
+		free(table->philos[i]);
 		i++;
 	}
-	return (result);
+	free(table->philos);
+	free(table->forks);
+	free(table);
+}
+
+time_t	get_time_in_ms(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
