@@ -4,8 +4,8 @@ INCLUDES = ./includes/
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g  -I$(INCLUDES)
 SRCS = main.c \
-		src/init_table.c src/logistics.c src/parsing.c \
-		src/system.c
+		src/init_table.c src/parsing.c \
+		src/safety.c
 
 OBJECTS = $(SRCS:.c=.o)
 

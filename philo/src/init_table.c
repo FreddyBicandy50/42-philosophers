@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 01:51:55 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/06 15:52:17 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/07 19:31:56 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	assgin_forks(t_table **table, int position)
 
 void	init_philo(t_table **table)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	(*table)->philos = safe_malloc(sizeof(t_philo)
@@ -59,7 +59,6 @@ void	init_philo(t_table **table)
 		assgin_forks(table, i);
 		(*table)->philos[i].ate_meals_counter = 0;
 		(*table)->philos[i].ate_full_meals = false;
-
 		i++;
 	}
 }
@@ -83,7 +82,12 @@ void	init_table(t_table **table, int argc, char *argv[])
 	int	i;
 
 	i = 1;
-	(*table) = safe_malloc(sizeof(t_philo));
+	(*table) = safe_malloc(sizeof(t_table));
+	if (!*table)
+		printf("ERRORRR ALOOC");
+	(*table)->all_philos_ready = false;
+	pthread_mutex_init(&(*table)->table_mutex, NULL);
+	pthread_mutex_init(&(*table)->write_mutex, NULL);
 	(*table)->number_of_philos = ft_atoi(argv[i++]) * 1000;
 	init_forks(table);
 	init_philo(table);

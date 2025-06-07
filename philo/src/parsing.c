@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 01:50:50 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/06 12:02:23 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/07 18:52:56 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ void	validate_parsing(char **argv)
 
 	nb = ft_atoi(argv[1]);
 	if (nb <= 0 || nb > MAX_PHILOS)
-		exit_safe("error ./philo: number of philosophers should be between 1 and 250\n");
+		exit_safe("error ./philo: number of philosophers should\
+			be between 1 and 250\n");
 	i = 1;
 	while (i <= 3)
 	{
