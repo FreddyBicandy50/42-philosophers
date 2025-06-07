@@ -5,22 +5,22 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/12 19:42:18 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/03 15:26:43 by fbicandy         ###   ########.fr       */
+/*   Created: 2025/06/06 01:50:50 by fbicandy          #+#    #+#             */
+/*   Updated: 2025/06/06 12:02:23 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-bool	ft_isdigit(char *str)
+void	does_containes_only_digits(char *str)
 {
 	while (*str)
 	{
 		if (!(*str >= '0' && *str <= '9'))
-			return (false);
+			exit_safe("only digits are accepted!");
 		str++;
 	}
-	return (true);
+	return ;
 }
 
 int	ft_atoi(char *str)
@@ -28,8 +28,7 @@ int	ft_atoi(char *str)
 	int	result;
 	int	i;
 
-	if (!ft_isdigit(str))
-		return (-1);
+	does_containes_only_digits(str);
 	result = 0;
 	i = 0;
 	while (str[i] >= '0' && str[i] <= '9')
@@ -38,4 +37,26 @@ int	ft_atoi(char *str)
 		i++;
 	}
 	return (result);
+}
+
+void	validate_parsing(char **argv)
+{
+	int	i;
+	int	nb;
+
+	nb = ft_atoi(argv[1]);
+	if (nb <= 0 || nb > MAX_PHILOS)
+		exit_safe("error ./philo: number of philosophers should be between 1 and 250\n");
+	i = 1;
+	while (i <= 3)
+	{
+		nb = ft_atoi(argv[i + 1]);
+		if (nb > __INT_MAX__)
+			exit_safe("error:number is grater than INT_MAX\n");
+		if (nb <= -1)
+			exit_safe("error:numbers cannot be negative\n");
+		if (i > 1 && nb < 60)
+			exit_safe("error:Time to eat,die,sleep should >= 60 microsec\n");
+		i++;
+	}
 }

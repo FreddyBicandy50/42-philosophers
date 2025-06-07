@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 15:17:08 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/03 20:16:53 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/06 16:07:04 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,41 +25,47 @@
 # define USAGE \
 	"usage: ./philo <number_of_philosophers> \
 <time_to_die> <time_to_eat> <time_to_sleep> \
-\n[number_of_times_each_philosopher_must_eat]\n"
-
+[number_of_times_each_philosopher_must_eat]\n"
 typedef struct s_table	t_table;
+
+typedef struct s_fork
+{
+	pthread_mutex_t		fork;
+	int					fork_id;
+}						t_fork;
 
 typedef struct s_philo
 {
-	pthread_t			thread;
-	unsigned int		id;
-	unsigned int		time_ate;
-	unsigned int		fork[2];
-	pthread_mutex_t		meal_time_lock;
-	time_t				last_meal;
+	pthread_t			thread_id;
+	int					id;
+	t_fork				*left_fork;
+	t_fork				*right_fork;
+	long				ate_meals_counter;
+	long				last_meal_time;
+	bool				ate_full_meals;
 	t_table				*table;
 }						t_philo;
 
 typedef struct s_table
 {
-	unsigned int		nb_philos;
-	int					must_eat_count;
-	time_t				time_to_eat;
-	time_t				time_to_die;
-	time_t				time_to_sleep;
-	time_t				start_time;
-	pthread_mutex_t		*forks;
-	pthread_mutex_t		stop_lock;
-	pthread_mutex_t		write_lock;
-	pthread_t			monitor;
-	bool				sim_stop;
-	t_philo				**philos;
+	int					number_of_philos;
+	int					time_to_die;
+	int					time_to_eat;
+	int					time_to_sleep;
+	int					number_of_meals;
+	time_t				start_simulation;
+	bool				has_simulation_end;
+ 	t_fork				*forks;
+	t_philo				*philos;
 }						t_table;
 
-t_table					*init_table(int argc, char **argv);
-t_philo					**init_philo(t_table *table);
-bool					ft_isdigit(char *str);
-time_t					get_time_in_ms(void);
-void					cleanup(t_table *table);
+void					sync_all_threads(t_table *table);
+void					mem_clear(void *data);
+void					exit_safe(char *msg);
+void					*saffe_malloc(size_t bytes);
+
 int						ft_atoi(char *str);
+void					validate_parsing(char **argv);
+
+void					init_table(t_table **table, int argc, char *argv[]);
 #endif

@@ -5,89 +5,92 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 01:51:55 by fbicandy          #+#    #+#             */
+/*   Updated: 2025/06/06 15:52:17 by fbicandy         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_table.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 15:18:08 by fbicandy          #+#    #+#             */
 /*   Updated: 2025/06/03 15:28:55 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../includes/philo.h"
 
-pthread_mutex_t	*init_mutexes(t_table **table)
+void	assgin_forks(t_table **table, int position)
 {
-	pthread_mutex_t	*forks;
-	int				i;
+	int		nb_philos;
+	t_fork	*left_fork;
+	t_fork	*right_fork;
 
-	i = 0;
-	forks = malloc(sizeof(pthread_mutex_t) * (*table)->nb_philos);
-	if (!forks)
-		return (printf("malloc error!"), NULL);
-	while (i < (int)(*table)->nb_philos)
+	nb_philos = (*table)->number_of_philos;
+	left_fork = &(*table)->forks[(position + 1) % nb_philos];
+	right_fork = &(*table)->forks[position];
+	if ((*table)->philos[position].id % 2 == 0)
 	{
-		if (pthread_mutex_init(&forks[i], 0) != 0)
-			return (printf("error mutex initialise"), free(forks), NULL);
-		i++;
+		(*table)->philos[position].right_fork = right_fork;
+		(*table)->philos[position].left_fork = left_fork;
 	}
-	if (pthread_mutex_init(&(*table)->write_lock, 0) != 0
-		|| pthread_mutex_init(&(*table)->stop_lock, 0) != 0)
-		return (NULL);
-	(*table)->sim_stop = false;
-	return (forks);
+	else
+	{
+		(*table)->philos[position].left_fork = left_fork;
+		(*table)->philos[position].right_fork = right_fork;
+	}
+	return ;
 }
 
-t_philo	**init_philo(t_table *table)
-{
-	t_philo			**philos;
-	unsigned int	i;
-
-	philos = malloc(sizeof(t_philo) * table->nb_philos);
-	if (!table)
-		return (printf("malloc error!"), NULL);
-	i = -1;
-	while (++i < table->nb_philos)
-	{
-		philos[i] = malloc(sizeof(t_philo) * 1);
-		if (pthread_mutex_init(&philos[i]->meal_time_lock, 0)
-			|| !philos[i] != 0)
-			return (printf("malloc error!"), free(table), NULL);
-		philos[i]->table = table;
-		philos[i]->id = i;
-		philos[i]->time_ate = 0;
-		philos[i]->fork[0] = i;
-		philos[i]->fork[1] = (i + 1) % table->nb_philos;
-		if (i % 2 == 0)
-		{
-			philos[i]->fork[0] = (i + 1) % table->nb_philos;
-			philos[i]->fork[1] = i;
-		}
-	}
-	return (philos);
-}
-
-t_table	*init_table(int argc, char **argv)
+void	init_philo(t_table **table)
 {
 	int		i;
-	t_table	*table;
 
-	table = malloc(sizeof(t_table));
-	if (!table)
-		return (printf("malloc error!"), NULL);
+	i = 0;
+	(*table)->philos = safe_malloc(sizeof(t_philo)
+			* (*table)->number_of_philos);
+	while (i < (*table)->number_of_philos)
+	{
+		(*table)->philos[i].id = i + 1;
+		assgin_forks(table, i);
+		(*table)->philos[i].ate_meals_counter = 0;
+		(*table)->philos[i].ate_full_meals = false;
+
+		i++;
+	}
+}
+
+void	init_forks(t_table **table)
+{
+	int	i;
+
+	i = 0;
+	(*table)->forks = safe_malloc(sizeof(t_fork) * (*table)->number_of_philos);
+	while (i < (*table)->number_of_philos)
+	{
+		pthread_mutex_init(&(*table)->forks[i].fork, NULL);
+		(*table)->forks->fork_id = i;
+		i++;
+	}
+}
+
+void	init_table(t_table **table, int argc, char *argv[])
+{
+	int	i;
+
 	i = 1;
-	if (ft_atoi(argv[i]) == 0)
-		return (printf("error ./philo: number of philosophers cannot be zero"),
-			free(table), NULL);
-	while (i < argc)
-		if (ft_atoi(argv[i]) <= -1 || ft_atoi(argv[i++]) > MAX_PHILOS)
-			return (printf("error:number of philos should be between 1->250\n"),
-				free(table), NULL);
-	i = 1;
-	table->nb_philos = ft_atoi(argv[i++]);
-	table->time_to_die = ft_atoi(argv[i++]);
-	table->time_to_eat = ft_atoi(argv[i++]);
-	table->time_to_sleep = ft_atoi(argv[i++]);
-	table->must_eat_count = -1;
+	(*table) = safe_malloc(sizeof(t_philo));
+	(*table)->number_of_philos = ft_atoi(argv[i++]) * 1000;
+	init_forks(table);
+	init_philo(table);
+	(*table)->time_to_die = ft_atoi(argv[i++]) * 1000;
+	(*table)->time_to_eat = ft_atoi(argv[i++]) * 1000;
+	(*table)->time_to_sleep = ft_atoi(argv[i++]) * 1000;
+	(*table)->number_of_meals = -1;
 	if (argc == 5)
-		table->must_eat_count = ft_atoi(argv[i]);
-	table->philos = init_philo(table);
-	table->forks = init_mutexes(&table);
-	return (table);
+		(*table)->number_of_meals = ft_atoi(argv[i]);
 }
