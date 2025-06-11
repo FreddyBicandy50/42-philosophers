@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:56:01 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/07 19:32:26 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/11 21:34:38 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,19 @@ bool	has_sim_ended(t_table *table)
 /*
  * we'll wait for all philos to be created before we start
  */
-bool	wait_all_threads(t_table *table)
+void	wait_all_threads(t_table *table)
 {
-	pthread_mutex_lock(&table->table_mutex);
-	if (table->all_philos_ready)
-		return (pthread_mutex_unlock(&table->table_mutex), true);
-	else
-		return (pthread_mutex_unlock(&table->table_mutex), false);
+	while (1)
+	{
+		pthread_mutex_lock(&table->table_mutex);
+		if (table->all_philos_ready)
+		{
+			pthread_mutex_unlock(&table->table_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&table->table_mutex);
+		usleep(100);
+	}
 }
 
 time_t	get_time_in_ms(void)

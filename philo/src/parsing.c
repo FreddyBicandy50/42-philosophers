@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 01:50:50 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/07 18:52:56 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/11 21:19:21 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	does_containes_only_digits(char *str)
 
 int	ft_atoi(char *str)
 {
-	int	result;
-	int	i;
+	long	result;
+	int		i;
 
 	does_containes_only_digits(str);
 	result = 0;
@@ -56,8 +56,7 @@ void	validate_parsing(char **argv)
 			exit_safe("error:number is grater than INT_MAX\n");
 		if (nb <= -1)
 			exit_safe("error:numbers cannot be negative\n");
-		if (i > 1 && nb < 60)
-			exit_safe("error:Time to eat,die,sleep should >= 60 microsec\n");
 		i++;
 	}
+	dprint("all arguments are valid...");
 }

@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 15:17:08 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/07 19:58:57 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/11 21:34:50 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,14 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+# define DEBUG_BANNER 1
 # define MAX_PHILOS 250
 # define USAGE \
 	"usage: ./philo <number_of_philosophers> \
 <time_to_die> <time_to_eat> <time_to_sleep> \
 [number_of_times_each_philosopher_must_eat]\n"
-typedef struct s_table	t_table;
 
+typedef struct s_table	t_table;
 typedef enum e_status
 {
 	EATING,
@@ -40,7 +41,7 @@ typedef enum e_status
 
 typedef struct s_fork
 {
-	pthread_mutex_t		fork;
+	pthread_mutex_t		lock;
 	int					fork_id;
 }						t_fork;
 
@@ -74,10 +75,11 @@ typedef struct s_table
 }						t_table;
 
 //						safety
+void					dprint(char *msg);
 void					exit_safe(char *msg);
 void					mem_clear(void *data);
 void					*safe_malloc(size_t bytes);
-void					write_status(char *msg, t_philo *philo);
+void					write_status(t_philo_status status, t_philo *philo);
 
 //						parsing
 int						ft_atoi(char *str);
@@ -89,10 +91,11 @@ void					create_philo(t_table *table);
 void					*philosopher_routine(void *data);
 
 //						utils
+time_t					get_time_in_us(void);
 time_t					get_time_in_ms(void);
 bool					has_sim_ended(t_table *table);
-bool					wait_all_threads(t_table *table);
+void					wait_all_threads(t_table *table);
 
-//						init
+//						`
 void					init_table(t_table **table, int argc, char *argv[]);
 #endif

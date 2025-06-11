@@ -6,11 +6,17 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 10:44:51 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/07 20:39:30 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/11 20:46:08 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+void	dprint(char *msg)
+{
+	if (DEBUG_BANNER)
+		printf("%s\n", msg);
+}
 
 void	exit_safe(char *msg)
 {

@@ -5,26 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/06 01:51:55 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/07 19:31:56 by fbicandy         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   init_table.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/03 15:18:08 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/03 15:28:55 by fbicandy         ###   ########.fr       */
+/*   Created: 2025/06/11 20:26:09 by fbicandy          #+#    #+#             */
+/*   Updated: 2025/06/11 21:21:21 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-void	assgin_forks(t_table **table, int position)
+void	assign_forks(t_table **table, int position)
 {
 	int		nb_philos;
 	t_fork	*left_fork;
@@ -46,35 +34,39 @@ void	assgin_forks(t_table **table, int position)
 	return ;
 }
 
-void	init_philo(t_table **table)
+void	init_philo(t_table **table, int nb_philos)
 {
 	int	i;
 
+	(*table)->philos = safe_malloc(sizeof(t_philo) * nb_philos);
+	if (!(*table)->philos)
+		exit_safe("Failed to allocate philosophers");
 	i = 0;
-	(*table)->philos = safe_malloc(sizeof(t_philo)
-			* (*table)->number_of_philos);
-	while (i < (*table)->number_of_philos)
+	while (i < nb_philos)
 	{
 		(*table)->philos[i].id = i + 1;
-		assgin_forks(table, i);
+		(*table)->philos[i].table = *table;
 		(*table)->philos[i].ate_meals_counter = 0;
 		(*table)->philos[i].ate_full_meals = false;
+		assign_forks(table, i);
 		i++;
 	}
+	dprint("\tall philos chairs have been initialised successfully...");
 }
 
-void	init_forks(t_table **table)
+void	init_forks(t_table **table, int nb_philos)
 {
 	int	i;
 
 	i = 0;
-	(*table)->forks = safe_malloc(sizeof(t_fork) * (*table)->number_of_philos);
-	while (i < (*table)->number_of_philos)
+	(*table)->forks = safe_malloc(sizeof(t_fork) * nb_philos);
+	while (i < nb_philos)
 	{
-		pthread_mutex_init(&(*table)->forks[i].fork, NULL);
+		pthread_mutex_init(&(*table)->forks[i].lock, NULL);
 		(*table)->forks->fork_id = i;
 		i++;
 	}
+	dprint("\tall forks has been initialised successfully...");
 }
 
 void	init_table(t_table **table, int argc, char *argv[])
@@ -83,18 +75,17 @@ void	init_table(t_table **table, int argc, char *argv[])
 
 	i = 1;
 	(*table) = safe_malloc(sizeof(t_table));
-	if (!*table)
-		printf("ERRORRR ALOOC");
-	(*table)->all_philos_ready = false;
 	pthread_mutex_init(&(*table)->table_mutex, NULL);
 	pthread_mutex_init(&(*table)->write_mutex, NULL);
-	(*table)->number_of_philos = ft_atoi(argv[i++]) * 1000;
-	init_forks(table);
-	init_philo(table);
+	(*table)->all_philos_ready = false;
+	(*table)->number_of_philos = ft_atoi(argv[i++]);
 	(*table)->time_to_die = ft_atoi(argv[i++]) * 1000;
 	(*table)->time_to_eat = ft_atoi(argv[i++]) * 1000;
 	(*table)->time_to_sleep = ft_atoi(argv[i++]) * 1000;
 	(*table)->number_of_meals = -1;
 	if (argc == 5)
 		(*table)->number_of_meals = ft_atoi(argv[i]);
+	init_philo(table, (*table)->number_of_philos);
+	init_forks(table, (*table)->number_of_philos);
+	dprint("Table has been initialised successfully...");
 }
