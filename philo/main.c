@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 20:26:49 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 19:53:36 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/29 00:50:01 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,41 +21,38 @@ void	join_all_philosophers(t_table *table)
 		pthread_join(table->philos[i].thread_id, NULL);
 }
 
-void	monitor_simulation_end(t_table *table)
+void	monitor_simulation(t_table *table)
 {
-	while (!has_sim_stopped(table))
+	int	philos_init;
+
+	philos_init = 0;
+	while (philos_init < table->number_of_philos)
 	{
-		if (table->number_of_meals > 0 && all_philos_ate_enough(table))
-		{
-			pthread_mutex_lock(&table->table_mutex);
-			table->has_simulation_end = true;
-			pthread_mutex_unlock(&table->table_mutex);
-			break ;
-		}
+		pthread_mutex_lock(&table->table_mutex);
+		philos_init = table->philos_initialized;
+		pthread_mutex_unlock(&table->table_mutex);
+		if (philos_init < table->number_of_philos)
+			usleep(100);
 	}
-	usleep(1000);
 }
 
 void	start_simulation(t_table *table)
 {
-	pthread_t	death_monitor_thread;
-
 	if (table->number_of_meals == 0)
 		return ;
-	if (table->number_of_philos == 1)
-		return ; // TODO:: handle lone philo
 	table->start_simulation = get_time_in_ms();
+	if (table->number_of_philos == 1)
+	{
+		printf("0 1 has taken a fork\n");
+		usleep(table->time_to_die * 1000);
+		printf("%d 1 died\n", table->time_to_die);
+		return ;
+	}
 	create_philos(table);
 	pthread_mutex_lock(&table->table_mutex);
 	table->all_philos_ready = true;
 	pthread_mutex_unlock(&table->table_mutex);
-	// Create death monitor thread
-	if (pthread_create(&death_monitor_thread, NULL, death_monitor, table) != 0)
-		return (mem_clear(table),
-			exit_safe("Failed to create death monitor thread"));
-	// Wait for simulation to end (death or all ate enough)
-	monitor_simulation_end(table);
-	pthread_join(death_monitor_thread, NULL);
+	monitor_simulation(table);
 	join_all_philosophers(table);
 }
 
@@ -63,10 +60,8 @@ int	main(int argc, char *argv[])
 {
 	t_table	*table;
 
-	(void)*argv;
-	(void)argc;
 	if (DEBUG_BANNER == 1)
-		dprint("!!!!SHOWING DEUBG MESSAGE!!!!");
+		dprint("!!!!SHOWING DEBUG MESSAGE!!!!");
 	table = NULL;
 	argc = argc - 1;
 	if (argc < 4 || argc > 5)

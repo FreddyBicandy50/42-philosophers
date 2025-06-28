@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 20:26:09 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 20:04:06 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/28 22:22:09 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,16 +53,17 @@ void	init_table(t_table **table, int argc, char *argv[])
 	pthread_mutex_init(&(*table)->table_mutex, NULL);
 	pthread_mutex_init(&(*table)->write_mutex, NULL);
 	pthread_mutex_init(&(*table)->meal_lock, NULL);
+	(*table)->number_of_philos = ft_atoi(argv[i++]);
+	(*table)->time_to_die = ft_atoi(argv[i++]) - 1;
+	(*table)->time_to_eat = ft_atoi(argv[i++]);
+	(*table)->time_to_sleep = ft_atoi(argv[i++]);
 	(*table)->number_of_meals = -1;
 	if (argc == 5)
 		(*table)->number_of_meals = ft_atoi(argv[i]);
-	(*table)->number_of_philos = ft_atoi(argv[i++]);
-	(*table)->time_to_die = ft_atoi(argv[i++]);
-	(*table)->time_to_eat = ft_atoi(argv[i++]);
-	(*table)->time_to_sleep = ft_atoi(argv[i++]);
 	(*table)->start_simulation = 0;
 	(*table)->all_philos_ready = false;
 	(*table)->has_simulation_end = false;
+	(*table)->philos_initialized = 0;
 	init_forks(table, (*table)->number_of_philos);
 	init_philo(table, (*table)->number_of_philos);
 	dprint("Table has been initialised successfully...");

@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:24:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 20:06:42 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/28 22:45:22 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,16 @@ void	take_forks(t_philo *philo)
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->right_fork);
-		print_status(philo, " has taken a fork");
+		print_status(philo, "has taken a fork");
 		pthread_mutex_lock(philo->left_fork);
-		print_status(philo, " has taken a fork");
+		print_status(philo, "has taken a fork");
 	}
 	else
 	{
 		pthread_mutex_lock(philo->left_fork);
-		print_status(philo, " has taken a fork");
+		print_status(philo, "has taken a fork");
 		pthread_mutex_lock(philo->right_fork);
-		print_status(philo, " has taken a fork");
+		print_status(philo, "has taken a fork");
 	}
 }
 
@@ -44,7 +44,7 @@ void	eat(t_philo *philo)
 	philo->last_meal_time = get_time_in_ms();
 	philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->table->meal_lock);
-	usleep(philo->table->time_to_eat * 1000); // <-- FIX HERE
+	ft_usleep(philo->table->time_to_eat);
 	drop_forks(philo);
 }
 
@@ -57,18 +57,19 @@ void	*philos_routine(void *data)
 	pthread_mutex_lock(&philo->table->meal_lock);
 	philo->last_meal_time = get_time_in_ms();
 	pthread_mutex_unlock(&philo->table->meal_lock);
+	pthread_mutex_lock(&philo->table->table_mutex);
+	philo->table->philos_initialized++;
+	pthread_mutex_unlock(&philo->table->table_mutex);
+	if (philo->id % 2 == 0)
+		usleep(500);
 	while (!has_sim_stopped(philo->table))
 	{
 		print_status(philo, "is thinking");
 		eat(philo);
-		if (philo->table->number_of_meals > 0
-			&& philo->meals_eaten >= philo->table->number_of_meals)
-		{
-			philo->ate_full_meals = true;
+		if (ate_full_meals(philo))
 			break ;
-		}
 		print_status(philo, "is sleeping");
-		usleep(philo->table->time_to_sleep * 1000);
+		ft_usleep(philo->table->time_to_sleep);
 	}
 	return (NULL);
 }
@@ -85,5 +86,5 @@ void	create_philos(t_table *table)
 			return (mem_clear(table),
 				exit_safe("error while creating threads"));
 	}
-	dprint("all philos created succesfully");
+	dprint("all philos created successfully");
 }

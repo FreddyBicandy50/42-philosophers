@@ -6,11 +6,24 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 10:44:51 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 00:54:49 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/28 22:42:53 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+bool	ate_full_meals(t_philo *philo)
+{
+	if (philo->table->number_of_meals > 0
+		&& philo->meals_eaten >= philo->table->number_of_meals)
+	{
+		pthread_mutex_lock(&philo->table->meal_lock);
+		philo->ate_full_meals = true;
+		pthread_mutex_unlock(&philo->table->meal_lock);
+		return (true);
+	}
+	return (false);
+}
 
 void	dprint(char *msg)
 {
