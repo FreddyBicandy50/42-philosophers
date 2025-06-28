@@ -6,71 +6,16 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:56:01 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/11 21:36:34 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/27 23:01:30 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-// void	precise_usleep(long usec, t_table *table)
-// {
-// 	time_t	start;
-// 	time_t	elapsed;
-// 	time_t	rem;
-
-// 	start = get_time_in_us();
-// 	while (get_time_in_us() - start < usec)
-// 	{
-// 		if (has_sim_ended(table))
-// 			break ;
-// 		elapsed = get_time_in_us();
-// 		rem = usec - elapsed;
-// 		if (rem > 1e3)
-// 			usleep(rem / 2);
-// 		else
-// 		{
-// 			while (get_time_in_us() - start < usec)
-// 				;
-// 		}
-// 	}
-// }
-
-bool	has_sim_ended(t_table *table)
-{
-	pthread_mutex_lock(&table->table_mutex);
-	if (table->has_simulation_end)
-		return (pthread_mutex_unlock(&table->table_mutex), true);
-	else
-		return (pthread_mutex_unlock(&table->table_mutex), false);
-}
-
-void	wait_all_threads(t_table *table)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&table->table_mutex);
-		if (table->all_philos_ready)
-		{
-			pthread_mutex_unlock(&table->table_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&table->table_mutex);
-		usleep(100);
-	}
-}
-
 time_t	get_time_in_ms(void)
 {
-	struct timeval	tv;
+	struct timeval tv;
 
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-}
-
-time_t	get_time_in_us(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((time_t)tv.tv_sec * 1000000 + tv.tv_usec);
 }

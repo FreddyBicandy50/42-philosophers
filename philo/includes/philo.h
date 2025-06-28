@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 15:17:08 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/11 21:34:50 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/28 01:07:20 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,30 +29,14 @@
 [number_of_times_each_philosopher_must_eat]\n"
 
 typedef struct s_table	t_table;
-typedef enum e_status
-{
-	EATING,
-	SLEEPING,
-	THINKNIG,
-	TAKE_LEFT_FORK,
-	TAKE_RIGHT_FORK,
-	DIED,
-}						t_philo_status;
-
-typedef struct s_fork
-{
-	pthread_mutex_t		lock;
-	int					fork_id;
-}						t_fork;
-
 typedef struct s_philo
 {
 	int					id;
 	pthread_t			thread_id;
-	t_fork				*left_fork;
-	t_fork				*right_fork;
+	pthread_mutex_t		*left_fork;
+	pthread_mutex_t		*right_fork;
 	time_t				start_sim;
-	long				ate_meals_counter;
+	long				meals_eaten;
 	long				last_meal_time;
 	bool				ate_full_meals;
 	t_table				*table;
@@ -68,10 +52,11 @@ typedef struct s_table
 	time_t				start_simulation;
 	bool				has_simulation_end;
 	bool				all_philos_ready;
-	t_fork				*forks;
 	t_philo				*philos;
+	pthread_mutex_t		*forks;
 	pthread_mutex_t		table_mutex;
 	pthread_mutex_t		write_mutex;
+	pthread_mutex_t		meal_lock;
 }						t_table;
 
 //						safety
@@ -79,23 +64,24 @@ void					dprint(char *msg);
 void					exit_safe(char *msg);
 void					mem_clear(void *data);
 void					*safe_malloc(size_t bytes);
-void					write_status(t_philo_status status, t_philo *philo);
+void					wait_all_philos(t_table *table);
+
+//						philos
+void					create_philos(t_table *table);
+
+//						manage
+bool					all_philos_ate_enough(t_table *table);
+void					*death_monitor(void *data);
+void					print_status(t_philo *philo, char *status);
+bool					has_sim_stopped(t_table *table);
 
 //						parsing
 int						ft_atoi(char *str);
 void					validate_parsing(char **argv);
 
-//						philo
-void					join_philo(t_table *table);
-void					create_philo(t_table *table);
-void					*philosopher_routine(void *data);
-
 //						utils
-time_t					get_time_in_us(void);
 time_t					get_time_in_ms(void);
-bool					has_sim_ended(t_table *table);
-void					wait_all_threads(t_table *table);
 
-//						`
+//						init_table
 void					init_table(t_table **table, int argc, char *argv[]);
 #endif

@@ -6,57 +6,84 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:24:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/11 21:33:14 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/28 20:06:42 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-void	eat(t_philo *philo)
+void	drop_forks(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->left_fork->lock);
-	write_status(TAKE_LEFT_FORK, philo);
-	pthread_mutex_unlock(&philo->left_fork->lock);
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
 }
 
-void	*philosopher_routine(void *data)
+void	take_forks(t_philo *philo)
 {
-	t_philo	*philosopher;
-
-	philosopher = (t_philo *)data;
-	wait_all_threads(philosopher->table);
-	while (!has_sim_ended(philosopher->table))
+	if (philo->id % 2 == 0)
 	{
-		;
-		// TODO: eat, sleep, think
+		pthread_mutex_lock(philo->right_fork);
+		print_status(philo, " has taken a fork");
+		pthread_mutex_lock(philo->left_fork);
+		print_status(philo, " has taken a fork");
+	}
+	else
+	{
+		pthread_mutex_lock(philo->left_fork);
+		print_status(philo, " has taken a fork");
+		pthread_mutex_lock(philo->right_fork);
+		print_status(philo, " has taken a fork");
+	}
+}
+
+void	eat(t_philo *philo)
+{
+	take_forks(philo);
+	print_status(philo, "is eating");
+	pthread_mutex_lock(&philo->table->meal_lock);
+	philo->last_meal_time = get_time_in_ms();
+	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->table->meal_lock);
+	usleep(philo->table->time_to_eat * 1000); // <-- FIX HERE
+	drop_forks(philo);
+}
+
+void	*philos_routine(void *data)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)data;
+	wait_all_philos(philo->table);
+	pthread_mutex_lock(&philo->table->meal_lock);
+	philo->last_meal_time = get_time_in_ms();
+	pthread_mutex_unlock(&philo->table->meal_lock);
+	while (!has_sim_stopped(philo->table))
+	{
+		print_status(philo, "is thinking");
+		eat(philo);
+		if (philo->table->number_of_meals > 0
+			&& philo->meals_eaten >= philo->table->number_of_meals)
+		{
+			philo->ate_full_meals = true;
+			break ;
+		}
+		print_status(philo, "is sleeping");
+		usleep(philo->table->time_to_sleep * 1000);
 	}
 	return (NULL);
 }
 
-void	create_philo(t_table *table)
+void	create_philos(t_table *table)
 {
 	int	i;
 
 	i = -1;
 	while (++i < table->number_of_philos)
 	{
-		printf("%d\n", i);
-		table->philos[i].start_sim = get_time_in_ms();
-		if (pthread_create(&table->philos[i].thread_id, NULL,
-				philosopher_routine, &table->philos[i]) != 0)
+		if (pthread_create(&table->philos[i].thread_id, NULL, philos_routine,
+				&table->philos[i]) != 0)
 			return (mem_clear(table),
-				exit_safe("error while creating threads!"));
+				exit_safe("error while creating threads"));
 	}
-	dprint("all philos created successfully...");
-}
-
-void	join_philo(t_table *table)
-{
-	int	i;
-
-	i = -1;
-	while (++i < table->number_of_philos)
-		if (pthread_join(table->philos[i].thread_id, NULL) != 0)
-			return (mem_clear(table),
-				exit_safe("error while wating philos to join"));
+	dprint("all philos created succesfully");
 }

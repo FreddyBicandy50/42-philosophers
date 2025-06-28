@@ -5,7 +5,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g  -I$(INCLUDES)
 SRCS = main.c \
 		src/init_table.c src/parsing.c \
-		src/safety.c src/philo.c src/utils.c
+		src/safety.c src/philo.c src/utils.c \
+		src/manage.c
 
 OBJECTS = $(SRCS:.c=.o)
 
