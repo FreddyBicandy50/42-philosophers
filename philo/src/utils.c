@@ -6,11 +6,17 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:56:01 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 22:43:43 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:16:06 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+void	dprint(char *msg)
+{
+	if (DEBUG_BANNER == 1)
+		printf("%s\n", msg);
+}
 
 long long	get_time_in_ms(void)
 {

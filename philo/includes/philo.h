@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 22:00:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/29 01:44:00 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:16:18 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,44 +56,45 @@ typedef struct s_table
 }					t_table;
 
 /* main.c */
-void				join_all_philosophers(t_table *table);
-void				monitor_meals(t_table *table);
 void				*death_monitor(void *data);
+void				monitor_meals(t_table *table);
 void				start_simulation(t_table *table);
+void				join_all_philosophers(t_table *table);
 
 /* init_table.c */
-void				init_table(t_table **table, int argc, char *argv[]);
 void				init_forks(t_table **table, int nb_philos);
 void				init_philo(t_table **table, int nb_philos);
+void				init_table(t_table **table, int argc, char *argv[]);
 
 /* parsing.c */
-void				validate_parsing(char **argv);
 int					ft_atoi(char *str);
+void				validate_parsing(char **argv);
 void				does_containes_only_digits(char *str);
 
 /* philo.c */
-void				create_philos(t_table *table);
-void				*philos_routine(void *data);
 void				eat(t_philo *philo);
 void				take_forks(t_philo *philo);
 void				drop_forks(t_philo *philo);
+void				*philos_routine(void *data);
+void				create_philos(t_table *table);
 
 /* manage.c */
 bool				has_sim_stopped(t_table *table);
-void				wait_all_philos(t_table *table);
-void				print_status(t_philo *philo, char *status);
 bool				is_philosopher_dead(t_philo *philo);
 bool				all_philos_ate_enough(t_table *table);
+void				wait_all_philos(t_table *table);
+void				print_status(t_philo *philo, char *status);
 
 /* utils.c */
 long long			get_time_in_ms(void);
 void				ft_usleep(long long time_in_ms);
 
 /* safety.c */
+bool				ate_full_meals(t_philo *philo);
 void				dprint(char *msg);
 void				exit_safe(char *msg);
 void				mem_clear(void *data);
 void				*safe_malloc(size_t bytes);
-bool				ate_full_meals(t_philo *philo);
+void				sim_stop(t_table **table, int index);
 
 #endif

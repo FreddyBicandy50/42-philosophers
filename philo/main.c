@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 20:26:49 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/29 13:56:30 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:15:56 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,23 +39,12 @@ void	monitor_simulation(t_table *table)
 	{
 		i = -1;
 		while (++i < table->number_of_philos)
-		{
 			if (is_philosopher_dead(&table->philos[i]))
-			{
-				print_status(&table->philos[i], "died");
-				pthread_mutex_lock(&table->table_mutex);
-				table->has_sim_stopped = true;
-				pthread_mutex_unlock(&table->table_mutex);
-				return ;
-			}
-		}
+				return (stop_sim(table, i));
 		if (table->number_of_meals > 0 && all_philos_ate_enough(table))
-		{
-			pthread_mutex_lock(&table->table_mutex);
-			table->has_sim_stopped = true;
-			pthread_mutex_unlock(&table->table_mutex);
-			return ;
-		}
+			return ((pthread_mutex_lock(&table->table_mutex),
+					table->has_sim_stopped = true),
+				pthread_mutex_unlock(&table->table_mutex));
 		usleep(1000);
 	}
 }
@@ -76,7 +65,7 @@ void	start_simulation(t_table *table)
 	table->all_philos_ready = true;
 	pthread_mutex_unlock(&table->table_mutex);
 	table->start_simulation = get_time_in_ms();
-	monitor_simulation(table); // Run monitor in main thread
+	monitor_simulation(table);
 	join_all_philosophers(table);
 }
 
