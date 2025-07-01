@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 20:26:09 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 22:22:09 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/29 01:46:12 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	init_table(t_table **table, int argc, char *argv[])
 		(*table)->number_of_meals = ft_atoi(argv[i]);
 	(*table)->start_simulation = 0;
 	(*table)->all_philos_ready = false;
-	(*table)->has_simulation_end = false;
+	(*table)->has_sim_stopped = false;
 	(*table)->philos_initialized = 0;
 	init_forks(table, (*table)->number_of_philos);
 	init_philo(table, (*table)->number_of_philos);

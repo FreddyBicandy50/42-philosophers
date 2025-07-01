@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 20:26:49 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/29 00:50:01 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/29 13:56:30 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	join_all_philosophers(t_table *table)
 
 void	monitor_simulation(t_table *table)
 {
+	int	i;
 	int	philos_init;
 
 	philos_init = 0;
@@ -34,13 +35,35 @@ void	monitor_simulation(t_table *table)
 		if (philos_init < table->number_of_philos)
 			usleep(100);
 	}
+	while (!has_sim_stopped(table))
+	{
+		i = -1;
+		while (++i < table->number_of_philos)
+		{
+			if (is_philosopher_dead(&table->philos[i]))
+			{
+				print_status(&table->philos[i], "died");
+				pthread_mutex_lock(&table->table_mutex);
+				table->has_sim_stopped = true;
+				pthread_mutex_unlock(&table->table_mutex);
+				return ;
+			}
+		}
+		if (table->number_of_meals > 0 && all_philos_ate_enough(table))
+		{
+			pthread_mutex_lock(&table->table_mutex);
+			table->has_sim_stopped = true;
+			pthread_mutex_unlock(&table->table_mutex);
+			return ;
+		}
+		usleep(1000);
+	}
 }
 
 void	start_simulation(t_table *table)
 {
 	if (table->number_of_meals == 0)
 		return ;
-	table->start_simulation = get_time_in_ms();
 	if (table->number_of_philos == 1)
 	{
 		printf("0 1 has taken a fork\n");
@@ -52,7 +75,8 @@ void	start_simulation(t_table *table)
 	pthread_mutex_lock(&table->table_mutex);
 	table->all_philos_ready = true;
 	pthread_mutex_unlock(&table->table_mutex);
-	monitor_simulation(table);
+	table->start_simulation = get_time_in_ms();
+	monitor_simulation(table); // Run monitor in main thread
 	join_all_philosophers(table);
 }
 

@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:24:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 22:45:22 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/29 13:55:47 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ void	*philos_routine(void *data)
 	pthread_mutex_lock(&philo->table->table_mutex);
 	philo->table->philos_initialized++;
 	pthread_mutex_unlock(&philo->table->table_mutex);
-	if (philo->id % 2 == 0)
-		usleep(500);
 	while (!has_sim_stopped(philo->table))
 	{
 		print_status(philo, "is thinking");

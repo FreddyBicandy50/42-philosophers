@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 23:56:16 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 22:43:55 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/29 01:46:19 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	print_status(t_philo *philo, char *status)
 	if (!has_sim_stopped(philo->table))
 	{
 		timestamp = get_time_in_ms() - philo->table->start_simulation;
-		printf("%lld %d %s\n", timestamp + 1, philo->id, status);
+		printf("%lld %d %s\n", timestamp, philo->id, status);
 	}
 	pthread_mutex_unlock(&philo->table->write_mutex);
 }
@@ -66,7 +66,7 @@ bool	has_sim_stopped(t_table *table)
 	bool	stopped;
 
 	pthread_mutex_lock(&table->table_mutex);
-	stopped = table->has_simulation_end;
+	stopped = table->has_sim_stopped;
 	pthread_mutex_unlock(&table->table_mutex);
 	return (stopped);
 }

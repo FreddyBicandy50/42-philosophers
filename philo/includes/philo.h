@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 22:00:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/28 22:45:48 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/06/29 01:44:00 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct s_table
 	int				number_of_meals;
 	long long		start_simulation;
 	bool			all_philos_ready;
-	bool			has_simulation_end;
+	bool			has_sim_stopped;
 	int				philos_initialized;
 	pthread_mutex_t	table_mutex;
 	pthread_mutex_t	write_mutex;
