@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 20:26:49 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/01 14:15:56 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:22:55 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,9 @@ void	monitor_simulation(t_table *table)
 		i = -1;
 		while (++i < table->number_of_philos)
 			if (is_philosopher_dead(&table->philos[i]))
-				return (stop_sim(table, i));
+				return (sim_stop(true, &table, i));
 		if (table->number_of_meals > 0 && all_philos_ate_enough(table))
-			return ((pthread_mutex_lock(&table->table_mutex),
-					table->has_sim_stopped = true),
-				pthread_mutex_unlock(&table->table_mutex));
+			return (sim_stop(false, &table, i));
 		usleep(1000);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 22:00:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/01 14:16:18 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/01 15:35:15 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,6 @@ void				dprint(char *msg);
 void				exit_safe(char *msg);
 void				mem_clear(void *data);
 void				*safe_malloc(size_t bytes);
-void				sim_stop(t_table **table, int index);
+void				sim_stop(bool died, t_table **table, int index);
 
 #endif
