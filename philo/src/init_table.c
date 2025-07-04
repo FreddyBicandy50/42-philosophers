@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 20:26:09 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/06/29 01:46:12 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:42:18 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	init_table(t_table **table, int argc, char *argv[])
 	pthread_mutex_init(&(*table)->write_mutex, NULL);
 	pthread_mutex_init(&(*table)->meal_lock, NULL);
 	(*table)->number_of_philos = ft_atoi(argv[i++]);
-	(*table)->time_to_die = ft_atoi(argv[i++]) - 1;
+	(*table)->time_to_die = ft_atoi(argv[i++]);
 	(*table)->time_to_eat = ft_atoi(argv[i++]);
 	(*table)->time_to_sleep = ft_atoi(argv[i++]);
 	(*table)->number_of_meals = -1;
