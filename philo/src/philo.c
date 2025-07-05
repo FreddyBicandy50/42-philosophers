@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:24:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:09:06 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:30:32 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@ void	drop_forks(t_philo *philo)
 
 void	take_forks(t_philo *philo)
 {
-	// Add thinking time to prevent thundering herd
 	if (philo->id % 2 == 0)
-		usleep(100); // Small delay for even philosophers
+		usleep(100);
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->right_fork);

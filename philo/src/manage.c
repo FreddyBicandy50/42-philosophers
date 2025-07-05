@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 23:56:16 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:08:29 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:30:46 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,9 @@ bool	is_philosopher_dead(t_philo *philo)
 		&& !philo->table->has_sim_stopped)
 	{
 		should_die = true;
-		// Mark simulation as stopped while still holding the lock
 		pthread_mutex_lock(&philo->table->table_mutex);
 		philo->table->has_sim_stopped = true;
 		pthread_mutex_unlock(&philo->table->table_mutex);
-		// Print death message while preventing other prints
 		pthread_mutex_lock(&philo->table->write_mutex);
 		printf("%lld %d died\n", current_time - philo->table->start_simulation,
 			philo->id);

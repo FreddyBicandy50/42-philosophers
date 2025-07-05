@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:56:01 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:09:43 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:29:58 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,11 @@ long long	get_time_in_ms(void)
 
 void	ft_usleep(long long time_in_ms)
 {
-	long long	elapsed;
-	long long	remaining;
+	long long		elapsed;
+	long long		remaining;
+	struct timeval	start;
+	struct timeval	current;
 
-	struct timeval start, current;
 	gettimeofday(&start, NULL);
 	while (1)
 	{
@@ -42,8 +43,8 @@ void	ft_usleep(long long time_in_ms)
 			break ;
 		remaining = time_in_ms - elapsed;
 		if (remaining > 1)
-			usleep((remaining * 1000) / 2); // Sleep for half the remaining time
+			usleep((remaining * 1000) / 2);
 		else
-			usleep(50); // Final precision adjustment
+			usleep(50);
 	}
 }
