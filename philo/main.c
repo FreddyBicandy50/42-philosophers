@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 20:26:49 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:22:24 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:22:55 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,35 +39,14 @@ void	monitor_simulation(t_table *table)
 	{
 		i = -1;
 		while (++i < table->number_of_philos)
-		{
 			if (is_philosopher_dead(&table->philos[i]))
-			{
-				// Announce death and stop simulation atomically
-				pthread_mutex_lock(&table->write_mutex);
-				pthread_mutex_lock(&table->table_mutex);
-				if (!table->has_sim_stopped) // Double-check
-				{
-					printf("%lld %d died\n", get_time_in_ms()
-						- table->start_simulation, table->philos[i].id);
-					table->has_sim_stopped = true;
-				}
-				pthread_mutex_unlock(&table->table_mutex);
-				pthread_mutex_unlock(&table->write_mutex);
-				return ;
-			}
-		}
+				return (sim_stop(true, &table, i));
 		if (table->number_of_meals > 0 && all_philos_ate_enough(table))
-		{
-			pthread_mutex_lock(&table->table_mutex);
-			table->has_sim_stopped = true;
-			pthread_mutex_unlock(&table->table_mutex);
-			return ;
-		}
-		usleep(500); // Reduced from 1000 for better precision
+			return (sim_stop(false, &table, i));
+		usleep(1000);
 	}
 }
 
-// In start_simulation() - Set start time BEFORE setting all_philos_ready
 void	start_simulation(t_table *table)
 {
 	if (table->number_of_meals == 0)
@@ -80,15 +59,14 @@ void	start_simulation(t_table *table)
 		return ;
 	}
 	create_philos(table);
-	// Set start time FIRST
-	table->start_simulation = get_time_in_ms();
-	// Then signal philosophers to start
 	pthread_mutex_lock(&table->table_mutex);
 	table->all_philos_ready = true;
 	pthread_mutex_unlock(&table->table_mutex);
+	table->start_simulation = get_time_in_ms();
 	monitor_simulation(table);
 	join_all_philosophers(table);
 }
+
 int	main(int argc, char *argv[])
 {
 	t_table	*table;

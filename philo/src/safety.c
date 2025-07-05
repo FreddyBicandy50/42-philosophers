@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 10:44:51 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:21:39 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:10:00 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,15 @@ bool	ate_full_meals(t_philo *philo)
 		return (true);
 	}
 	return (false);
+}
+
+void	sim_stop(bool died, t_table **table, int index)
+{
+	if (died)
+		print_status(&(*table)->philos[index], "died");
+	pthread_mutex_lock(&(*table)->table_mutex);
+	(*table)->has_sim_stopped = true;
+	pthread_mutex_unlock(&(*table)->table_mutex);
 }
 
 void	exit_safe(char *msg)
