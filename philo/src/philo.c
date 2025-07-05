@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:24:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:09:06 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:20:59 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,18 +51,19 @@ void	eat(t_philo *philo)
 	drop_forks(philo);
 }
 
+// In philo.c - Updated philos_routine()
 void	*philos_routine(void *data)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
+	pthread_mutex_lock(&philo->table->table_mutex);
+	philo->table->philos_initialized++;
+	pthread_mutex_unlock(&philo->table->table_mutex);
 	wait_all_philos(philo->table);
 	pthread_mutex_lock(&philo->table->meal_lock);
 	philo->last_meal_time = get_time_in_ms();
 	pthread_mutex_unlock(&philo->table->meal_lock);
-	pthread_mutex_lock(&philo->table->table_mutex);
-	philo->table->philos_initialized++;
-	pthread_mutex_unlock(&philo->table->table_mutex);
 	while (!has_sim_stopped(philo->table))
 	{
 		print_status(philo, "is thinking");
