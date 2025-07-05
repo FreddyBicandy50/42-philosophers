@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 10:44:51 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:28:54 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:40:00 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ bool	ate_full_meals(t_philo *philo)
 
 void	sim_stop(bool died, t_table **table, int index)
 {
-	if (died)
+	if (died && !((*table)->number_of_meals > 0))
 		print_status(&(*table)->philos[index], "died");
 	pthread_mutex_lock(&(*table)->table_mutex);
 	(*table)->has_sim_stopped = true;
