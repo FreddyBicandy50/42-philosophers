@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 10:44:51 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/01 15:35:22 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:10:00 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,28 @@ void	exit_safe(char *msg)
 	return (printf("%s", msg), exit(EXIT_FAILURE));
 }
 
-void	mem_clear(void *data)
+void mem_clear(void *data)
 {
-	t_table	*table;
-
-	table = (t_table *)data;
-	if (table->forks)
-		free(table->forks);
-	if (table->philos)
-		free(table->philos);
-	free(table);
+    t_table *table;
+    int i;
+    
+    table = (t_table *)data;
+    
+    if (table->forks)
+    {
+        for (i = 0; i < table->number_of_philos; i++)
+            pthread_mutex_destroy(&table->forks[i]);
+        free(table->forks);
+    }
+    
+    pthread_mutex_destroy(&table->table_mutex);
+    pthread_mutex_destroy(&table->write_mutex);
+    pthread_mutex_destroy(&table->meal_lock);
+    
+    if (table->philos)
+        free(table->philos);
+    free(table);
 }
-
 void	*safe_malloc(size_t bytes)
 {
 	void	*memorie_allocated;

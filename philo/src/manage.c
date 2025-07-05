@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 23:56:16 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/01 15:34:45 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:08:29 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,28 @@ bool	is_philosopher_dead(t_philo *philo)
 {
 	long long	current_time;
 	long long	time_since_last_meal;
-	bool		is_dead;
+	bool		should_die;
 
-	is_dead = false;
+	should_die = false;
 	pthread_mutex_lock(&philo->table->meal_lock);
 	current_time = get_time_in_ms();
 	time_since_last_meal = current_time - philo->last_meal_time;
-	if (time_since_last_meal > philo->table->time_to_die)
-		is_dead = true;
+	if (time_since_last_meal > philo->table->time_to_die
+		&& !philo->table->has_sim_stopped)
+	{
+		should_die = true;
+		// Mark simulation as stopped while still holding the lock
+		pthread_mutex_lock(&philo->table->table_mutex);
+		philo->table->has_sim_stopped = true;
+		pthread_mutex_unlock(&philo->table->table_mutex);
+		// Print death message while preventing other prints
+		pthread_mutex_lock(&philo->table->write_mutex);
+		printf("%lld %d died\n", current_time - philo->table->start_simulation,
+			philo->id);
+		pthread_mutex_unlock(&philo->table->write_mutex);
+	}
 	pthread_mutex_unlock(&philo->table->meal_lock);
-	return (is_dead);
+	return (should_die);
 }
 
 void	print_status(t_philo *philo, char *status)
