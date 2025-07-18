@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 23:56:16 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:33:20 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/08 15:47:38 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ bool	is_philosopher_dead(t_philo *philo)
 	pthread_mutex_lock(&philo->table->meal_lock);
 	current_time = get_time_in_ms();
 	time_since_last_meal = current_time - philo->last_meal_time;
-	if (time_since_last_meal > philo->table->time_to_die
+	if (time_since_last_meal >= philo->table->time_to_die + 5
 		&& !philo->table->has_sim_stopped)
 		should_die = true;
 	pthread_mutex_unlock(&philo->table->meal_lock);

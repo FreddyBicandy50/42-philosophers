@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 20:26:49 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/01 14:22:55 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/08 15:47:46 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,11 @@ void	start_simulation(t_table *table)
 		printf("%d 1 died\n", table->time_to_die);
 		return ;
 	}
+	table->start_simulation = get_time_in_ms();
 	create_philos(table);
 	pthread_mutex_lock(&table->table_mutex);
 	table->all_philos_ready = true;
 	pthread_mutex_unlock(&table->table_mutex);
-	table->start_simulation = get_time_in_ms();
 	monitor_simulation(table);
 	join_all_philosophers(table);
 }

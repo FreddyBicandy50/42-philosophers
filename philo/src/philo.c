@@ -6,7 +6,7 @@
 /*   By: fbicandy <fbicandy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:24:00 by fbicandy          #+#    #+#             */
-/*   Updated: 2025/07/05 14:30:32 by fbicandy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:38:27 by fbicandy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ void	take_forks(t_philo *philo)
 void	eat(t_philo *philo)
 {
 	take_forks(philo);
-	print_status(philo, "is eating");
 	pthread_mutex_lock(&philo->table->meal_lock);
+	print_status(philo, "is eating");
 	philo->last_meal_time = get_time_in_ms();
 	philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->table->meal_lock);
@@ -66,7 +66,7 @@ void	*philos_routine(void *data)
 	{
 		print_status(philo, "is thinking");
 		eat(philo);
-		if (ate_full_meals(philo))
+		if (ate_full_meals(philo) || is_philosopher_dead(philo))
 			break ;
 		print_status(philo, "is sleeping");
 		ft_usleep(philo->table->time_to_sleep);
